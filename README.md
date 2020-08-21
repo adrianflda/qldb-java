@@ -16,6 +16,10 @@ This sample app is aimed at demonstrating how to model a double entry financial 
    * [License](#license)
    
 ## AWS Cli Setup
+
+```bash
+nano ~/.aws/credentials
+
 [wt-account]
 aws_access_key_id=<key>
 aws_secret_access_key=<secret>
@@ -23,8 +27,9 @@ aws_secret_access_key=<secret>
 [default]
 role_arn=<the ARN of the role you want to assume>
 source_profile=wt-account
+```
 
-Then, when you launch, set an environment variable: AWS_PROFILE=somerole
+ if you want to use other configuration's name set an environment variable: AWS_PROFILE="your configuration's name instead default"
 
 ## Setup
 
