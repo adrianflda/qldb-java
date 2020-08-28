@@ -25,7 +25,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @AllArgsConstructor
-public enum TransactionType {
+public enum TransactionLogType {
 
     CREDIT,
     DEBIT;

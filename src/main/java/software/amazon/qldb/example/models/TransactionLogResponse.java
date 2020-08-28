@@ -16,7 +16,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package software.amazon.qldb.doubleentry.models;
+package software.amazon.qldb.example.models;
 
 import lombok.Builder;
 import lombok.Getter;

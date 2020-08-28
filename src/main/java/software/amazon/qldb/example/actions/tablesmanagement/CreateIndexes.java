@@ -50,7 +50,7 @@ public class CreateIndexes {
 
     public void createAllIndexes() {
         transactionsHandler.executeTransactionWithNoReturn(txn-> {
-            createIndex(txn, Constants.TRANSACTION_LOG_TABLE_NAME, Constants.TRANSACTIONS_LOG_INDEX_NAME);
+            createIndex(txn, Constants.TRANSACTION_LOG_TABLE_NAME, Constants.TRANSACTION_LOG_INDEX_NAME);
         }, (retryAttempt) -> log.info("Retrying due to OCC conflict..."));
     }
 

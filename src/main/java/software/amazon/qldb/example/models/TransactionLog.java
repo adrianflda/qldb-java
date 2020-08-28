@@ -18,7 +18,6 @@
 
 package software.amazon.qldb.example.models;
 
-import com.amazon.ion.Decimal;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -28,45 +27,45 @@ import lombok.Data;
 public class TransactionLog {
 
     @JsonProperty("Amount")
-    private Decimal amount;
+    private double amount;
 
     @JsonProperty("TransactionScope")
-    private Int transactionScope;
+    private int transactionScope;
 
     @JsonProperty("TransactionCategory")
-    private Int transactionCategory;
+    private int transactionCategory;
 
     @JsonProperty("TransactionType")
-    private Int transactionType;
+    private int transactionType;
 
     @JsonProperty("TransactionId")
     private String transactionId;
 
     @JsonProperty("TransactionStatus")
-    private Int transactionStatus;
+    private int transactionStatus;
 
     @JsonProperty("TransactionFees")
-    private Decimal transactionFees;
+    private double transactionFees;
 
     @JsonProperty("SubjectModel")
-    private Int subjectModel;
+    private int subjectModel;
 
     @JsonProperty("WalletUUID")
     private String walletUUID;
 
     @JsonProperty("CreatedAt")
-    private Date createdAt;
+    private String createdAt;
 
     @JsonProperty("UpdatedAt")
-    private Date updatedAt;
+    private String updatedAt;
 
     @JsonProperty("Version")
-    private Int version;
+    private int version;
 
     @JsonProperty("Description")
     private String description;
 
     @JsonProperty("GameType")
-    private Int gameType;
+    private int gameType;
     
 }

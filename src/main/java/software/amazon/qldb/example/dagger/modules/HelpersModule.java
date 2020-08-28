@@ -26,9 +26,7 @@ import com.fasterxml.jackson.dataformat.ion.ionvalue.IonValueMapper;
 import dagger.Module;
 import dagger.Provides;
 import software.amazon.qldb.PooledQldbDriver;
-import software.amazon.qldb.example.actions.tablesmanagement.LoadSampleData;
 import software.amazon.qldb.example.helpers.IonHelper;
-import software.amazon.qldb.example.helpers.SampleData;
 import software.amazon.qldb.example.helpers.TransactionsHandler;
 
 import javax.inject.Named;

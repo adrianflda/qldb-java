@@ -6,7 +6,7 @@ plugins {
 group 'software.amazon.qldb'
 version '1.0'
 
-mainClassName = "software.amazon.qldb.doubleentry.tasks." + System.getProperty("task")
+mainClassName = "software.amazon.qldb.example.tasks." + System.getProperty("task")
 sourceCompatibility = 1.8
 
 repositories {

@@ -16,7 +16,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package software.amazon.qldb.doubleentry.models;
+package software.amazon.qldb.example.models;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -25,32 +25,32 @@ import lombok.Getter;
 @Builder
 public class TransactionLogRequest {
 
-    private Decimal amount;
+    private double amount;
 
-    private Int transactionScope;
+    private int transactionScope;
 
-    private Int transactionCategory;
+    private int transactionCategory;
 
-    private Int transactionType;
+    private int transactionType;
 
     private String transactionId;
 
-    private Int transactionStatus;
+    private int transactionStatus;
 
-    private Decimal transactionFees;
+    private double transactionFees;
 
-    private Int subjectModel;
+    private int subjectModel;
 
     private String walletUUID;
 
-    private Date createdAt;
+    private String createdAt;
 
-    private Date updatedAt;
+    private String updatedAt;
 
-    private Int version;
+    private int version;
 
     private String description;
 
-    private Int gameType;
+    private int gameType;
 
 }

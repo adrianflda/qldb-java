@@ -66,7 +66,7 @@ set CMD_LINE_ARGS=%*
 set CLASSPATH=%APP_HOME%\lib\amazon-qldb-double-entry-sample-java-1.0.jar;%APP_HOME%\lib\dagger-2.2.jar;%APP_HOME%\lib\slf4j-simple-1.7.26.jar;%APP_HOME%\lib\jackson-dataformat-ion-2.10.0.pr1.jar;%APP_HOME%\lib\commons-lang3-3.1.jar;%APP_HOME%\lib\amazon-qldb-driver-java-1.0.2.jar;%APP_HOME%\lib\aws-java-sdk-qldb-1.11.628.jar;%APP_HOME%\lib\aws-java-sdk-iam-1.11.628.jar;%APP_HOME%\lib\aws-java-sdk-s3-1.11.628.jar;%APP_HOME%\lib\aws-java-sdk-sts-1.11.628.jar;%APP_HOME%\lib\aws-java-sdk-qldbsession-1.11.649.jar;%APP_HOME%\lib\aws-java-sdk-kms-1.11.628.jar;%APP_HOME%\lib\aws-java-sdk-core-1.11.649.jar;%APP_HOME%\lib\javax.inject-1.jar;%APP_HOME%\lib\slf4j-api-1.7.26.jar;%APP_HOME%\lib\ion-hash-java-1.0.0.jar;%APP_HOME%\lib\ion-java-1.4.0.jar;%APP_HOME%\lib\jmespath-java-1.11.649.jar;%APP_HOME%\lib\jackson-databind-2.10.0.pr1.jar;%APP_HOME%\lib\jackson-annotations-2.10.0.pr1.jar;%APP_HOME%\lib\jackson-dataformat-cbor-2.6.7.jar;%APP_HOME%\lib\jackson-core-2.10.0.pr1.jar;%APP_HOME%\lib\httpclient-4.5.9.jar;%APP_HOME%\lib\commons-logging-1.2.jar;%APP_HOME%\lib\ion-java-1.0.2.jar;%APP_HOME%\lib\joda-time-2.8.1.jar;%APP_HOME%\lib\httpcore-4.4.11.jar;%APP_HOME%\lib\commons-codec-1.11.jar
 
 @rem Execute amazon-qldb-double-entry-sample-java
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %AMAZON_QLDB_DOUBLE_ENTRY_SAMPLE_JAVA_OPTS%  -classpath "%CLASSPATH%" software.amazon.qldb.doubleentry.tasks.null %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %AMAZON_QLDB_DOUBLE_ENTRY_SAMPLE_JAVA_OPTS%  -classpath "%CLASSPATH%" software.amazon.qldb.example.tasks.null %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell

@@ -29,9 +29,8 @@ import software.amazon.qldb.TransactionExecutor;
 import software.amazon.qldb.example.Constants;
 import software.amazon.qldb.example.helpers.IonHelper;
 import software.amazon.qldb.example.helpers.TransactionsHandler;
-import software.amazon.qldb.example.models.Balance;
 import software.amazon.qldb.example.models.TransactionLog;
-import software.amazon.qldb.example.models.TransactionType;
+import software.amazon.qldb.example.models.TransactionLogType;
 import software.amazon.qldb.example.models.TransactionLogRequest;
 import software.amazon.qldb.example.models.TransactionLogResponse;
 
@@ -92,55 +91,17 @@ public class Banking {
             @NonNull final TransactionLogRequest transactionLogRequest) {
 
         Validate.isTrue(transactionLogRequest.getAmount() > 0);
-        Validate.notBlank(transactionLogRequest.getTransactionScope())
-        Validate.notBlank(transactionLogRequest.getTransactionCategory())
-        Validate.notBlank(transactionLogRequest.getTransactionType())
-        Validate.notBlank(transactionLogRequest.getTransactionId())
-        Validate.notBlank(transactionLogRequest.getTransactionStatus())
-        Validate.notBlank(transactionLogRequest.getTransactionFees())
-        Validate.notBlank(transactionLogRequest.getSubjectModel())
-        Validate.notBlank(transactionLogRequest.getWalletUUID())
-        Validate.notBlank(transactionLogRequest.getVersion())
-        Validate.notBlank(transactionLogRequest.getDescription())
-        Validate.notBlank(transactionLogRequest.getGameType())
-    }
-
-    /**
-     * Given an AccountId, get all the balances of the account
-     * This method is called as a part of the QLDB Transaction and takes in the
-     * TransactionExecutor instance as an input  argument.
-     *
-     * @param txn The TransactionExecutor object which is instantiated during
-     *            the QLDB Transaction
-     * @param accountId
-     * @return List of Balances for the given AccountId
-     */
-    private List<Balance> getBalancesForAccount(
-            @NonNull final TransactionExecutor txn,
-            @NonNull final String accountId) {
-
-        List<Balance> balances = new ArrayList<>();
-
-        final String queryString = "SELECT Balances FROM Accounts WHERE AccountId = ?";
-        final List<IonValue> parameters = Collections.singletonList(
-                ionHelper.toIonValue(accountId));
-
-        log.debug("Reading the balance for AccountID {}", accountId);
-        final Result result = txn.execute(queryString, parameters);
-        if (result.isEmpty()) {
-            log.error("Could not find any balances for the account {}", result);
-            return balances;
-        }
-
-        final List<IonStruct> documents = ionHelper.toIonStructs(result);
-        if (1 != documents.size()) {
-            log.error("More than one accounts exist for the same Account Id {}. Cannot decide which account to "
-                    + "pick", accountId);
-            return balances;
-        }
-
-        balances = Arrays.asList(ionHelper.readIonValue(documents.get(0).get("Balances"), Balance[].class));
-        return balances;
+        Validate.notNull(transactionLogRequest.getTransactionScope());
+        Validate.notNull(transactionLogRequest.getTransactionCategory());
+        Validate.notNull(transactionLogRequest.getTransactionType());
+        Validate.notBlank(transactionLogRequest.getTransactionId());
+        Validate.notNull(transactionLogRequest.getTransactionStatus());
+        Validate.notNull(transactionLogRequest.getTransactionFees());
+        Validate.notNull(transactionLogRequest.getSubjectModel());
+        Validate.notBlank(transactionLogRequest.getWalletUUID());
+        Validate.notNull(transactionLogRequest.getVersion());
+        Validate.notBlank(transactionLogRequest.getDescription());
+        Validate.notNull(transactionLogRequest.getGameType());
     }
 
     /**
@@ -169,9 +130,9 @@ public class Banking {
             .version(transactionLogRequest.getVersion())
             .description(transactionLogRequest.getDescription())
             .gameType(transactionLogRequest.getGameType())
-            .build()
+            .build();
 
-        final String query = "INSERT INTO TransactionLogs VALUE ? ";
+        final String query = "INSERT INTO transaction_log VALUE ? ";
         final IonValue transactionDocument =
                 ionHelper.toIonValue(transaction);
 

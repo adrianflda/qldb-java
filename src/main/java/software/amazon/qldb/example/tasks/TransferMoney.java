@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import software.amazon.qldb.example.actions.Banking;
 import software.amazon.qldb.example.dagger.components.BankingComponent;
 import software.amazon.qldb.example.dagger.components.DaggerBankingComponent;
-import software.amazon.qldb.example.models.Balance;
 import software.amazon.qldb.example.models.TransactionLogRequest;
 import software.amazon.qldb.example.models.TransactionLogResponse;
 
@@ -91,26 +90,27 @@ public class TransferMoney {
      */
     public TransactionLogResponse runSingleTransfer(TransactionLogRequest transactionLogRequest) {
         final TransactionLogResponse transferResponse = banking.transfer(transactionLogRequest);
-        return transferResponse
+        return transferResponse;
     }
 
     public static void main(String... args) {
+        log.info("length: " + args.length);
         final BankingComponent bankingComponent = DaggerBankingComponent.builder().build();
         final TransferMoney transferMoney = bankingComponent.providesTransferMoney();
-        final TransactionLogRequest transactionLogRequest = TransactionLogRequest.build()
-            .amount(args[1])
-            .transactionScope(args[2])
-            .transactionCategory(args[3])
-            .transactionType(args[4])
+        final TransactionLogRequest transactionLogRequest = TransactionLogRequest.builder()
+            .amount(Double.parseDouble(args[1]))
+            .transactionScope(Integer.parseInt(args[2]))
+            .transactionCategory(Integer.parseInt(args[3]))
+            .transactionType(Integer.parseInt(args[4]))
             .transactionId(args[5])
-            .transactionStatus(args[6])
-            .transactionFees(args[7])
-            .subjectModel(args[8])
+            .transactionStatus(Integer.parseInt(args[6]))
+            .transactionFees(Double.parseDouble(args[7]))
+            .subjectModel(Integer.parseInt(args[8]))
             .walletUUID(args[9])
-            .version(args[10])
+            .version(Integer.parseInt(args[10]))
             .description(args[11])
-            .gameType(args[12])
-            .build()
+            .gameType(Integer.parseInt(args[12]))
+            .build();
         if (args.length == 0 || args[0].equals("singleTransfer")) {
             transferMoney.runSingleTransfer(transactionLogRequest);
         } else {

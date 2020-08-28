@@ -28,7 +28,7 @@ import java.util.List;
 public final class Constants {
 
     public static final int RETRY_LIMIT = 4;
-    public static final String LEDGER_NAME = "example-ledger";
+    public static final String LEDGER_NAME = "fantas-example-ledger";
     public static final String TRANSACTION_LOG_TABLE_NAME = "transaction_log";
     public static final String TRANSACTION_LOG_INDEX_NAME = "transaction_id";
 

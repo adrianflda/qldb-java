@@ -16,14 +16,14 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package software.amazon.qldb.doubleentry.dagger.components;
+package software.amazon.qldb.example.dagger.components;
 
 import dagger.Component;
-import software.amazon.qldb.doubleentry.dagger.modules.BankingModule;
-import software.amazon.qldb.doubleentry.dagger.modules.DriverClientModule;
-import software.amazon.qldb.doubleentry.dagger.modules.HelpersModule;
-import software.amazon.qldb.doubleentry.dagger.modules.TasksModule;
-import software.amazon.qldb.doubleentry.tasks.TransferMoney;
+import software.amazon.qldb.example.dagger.modules.BankingModule;
+import software.amazon.qldb.example.dagger.modules.DriverClientModule;
+import software.amazon.qldb.example.dagger.modules.HelpersModule;
+import software.amazon.qldb.example.dagger.modules.TasksModule;
+import software.amazon.qldb.example.tasks.TransferMoney;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
