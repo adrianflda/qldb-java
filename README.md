@@ -134,7 +134,7 @@ Read more about QLDB indexes in our [developer guide](https://docs.aws.amazon.co
 
 To run this task, do
 
-`./gradlew run -Dtask=TransferMoney --args <Name of the Argument Eg: singleTransfer>` 
+`./gradlew run -Dtask=TransferMoney --args 'singleTransfer amount transactionScope transactionCategory transactionType transactionId transactionStatus transactionFees subjectModel walletUUID version description gameType'`
 
 This task also takes additional argument to indicate the kind of transfer to be done. There are two types supported:
 
