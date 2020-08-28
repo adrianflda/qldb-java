@@ -60,20 +60,6 @@ public class TransactionsHandler {
     }
 
     /**
-     * Using this method, you do not need to return anything from the transaction.
-     * @param executorNoReturn The anonymous function that has to be executed
-     *                         as a part of the transaction. This function does
-     *                         not return any value
-     * @param retryIndicator  The function to be executed on retry
-     */
-    public void executeTransactionWithNoReturn(final ExecutorNoReturn executorNoReturn, RetryIndicator retryIndicator) {
-        try (final QldbSession qldbSession = pooledQldbDriver.getSession()) {
-            qldbSession.execute(executorNoReturn, retryIndicator);
-        }
-    }
-
-
-    /**
      * Using this method, you can return results from the transaction
      * @param executor The anonymous function that has to be executed
      *                         as a part of the transaction. This function does

@@ -66,67 +66,10 @@ public class Banking {
         this.ionHelper = ionHelper;
     }
 
-    /**
-     * Get the balances for the given AccountId. This method is intended to
-     * be used from the example code and just  logs the balance.
-     *
-     * @param accountId The AccountId to get the balances for
-     */
-    public List<Balance> getBalancesForAccount(@NonNull final String accountId) {
-        return transactionsHandler.executeTransaction(txn -> {
-            final List<Balance> balances = this.getBalancesForAccount(txn, accountId);
-            return balances;
-        }, (retry) -> log.info("There was an error while checking for balance. Retrying "));
-    }
-
-    /**
-     * <p>
-     * Initiate the transfer of money between two accounts. The method first
-     * validates all the parameters, and then starts a QLDB Transaction(via the
-     * TransactionHandler). In the QLDB Transaction we do the following steps:
-     * </p>
-     * <ol>
-     *     <li>Read the Balances of the Sender Account </li>
-     *     <li>Read the Balances of the Receiver Account </li>
-     *     <li> Check if Sender Account and Receiver Accounts support the currency
-     *     and Sender Account has balance more than the requested transfer amount
-     *     </li>
-     *     <li>Once the above checks pass, we create an entry
-     *     in the Transactions table </li>
-     *     <li>Calculate and update the balance of Sender Account</li>
-     *     <li>Calculate and update the balance of Receiver Account</li>
-     * </ol>
-     *
-     * <p>
-     * All the above mentioned steps are part of a single QLDB Transaction.
-     * If there is an OCC while committing this transaction, then the
-     * QLDB Driver(or specifically, QLDB session) takes care of retrying the
-     * entire transaction, meaning, the failed transaction will start again from
-     * reading the balances, doing the business validations again with the new
-     * values, and then updating the balance to the correct values.
-     * </p>
-     */
-    public TransactionLogResponse transfer(@NonNull final TransactionLogRequest transferRequest) {
+    public TransactionLogResponse transfer(@NonNull final TransactionLogRequest transactionLogRequest) {
 
         //Validate that the input parameters are correct
-        validateParameters(transferRequest);
-
-        /*
-        * The executeTransaction Method of TransactionsHandler will take care
-        * of getting the QLDB session and executing  the given transaction
-        * body(via the anonymous function)
-        *
-        * If there is an OCC while doing the transaction, this entire anonymous
-        * function will be tried again, meaning, the balances will be read
-        * again, the balance checks will be done again and the new balances
-        * will be computed  and the transaction commit will be tried again.
-        *
-        */
-
-        final String senderAccountId = transferRequest.getSenderAccountId();
-        final String receiverAccountId = transferRequest.getReceiverAccountId();
-        final String currency = transferRequest.getCurrency();
-        final double amount = transferRequest.getAmount();
+        validateParameters(transactionLogRequest);
 
         /*
         * transferSuccessful flag should default to false unless we actually
@@ -137,53 +80,29 @@ public class Banking {
                 .build();
 
         return transactionsHandler.executeTransaction(txn -> {
-            final List<Balance> senderAccountBalances =
-                    getBalancesForAccount(txn, senderAccountId);
-
-            log.debug("The Balance for AccountId {} is {}",
-                    senderAccountId, senderAccountBalances);
-
-            final List<Balance> receiverAccountBalances =
-                    getBalancesForAccount(txn, receiverAccountId);
-
-            log.debug("The Balance for AccountId {} is {}",
-                    receiverAccountId, receiverAccountBalances);
-
-            if (senderHasSufficientBalance(senderAccountBalances, currency, amount) &&
-                    receiverAcceptsCurrency(receiverAccountBalances, currency)) {
-
-                addEntryInTransactions(txn, transferRequest);
-
-                updateBalance(txn, senderAccountBalances, senderAccountId,
-                        currency, amount, TransactionType.DEBIT);
-
-                updateBalance(txn, receiverAccountBalances, receiverAccountId,
-                        currency, amount, TransactionType.CREDIT);
-                response.setTransferSuccessful(true);
-                response.setUpdatedReceiverBalances(receiverAccountBalances);
-                response.setUpdatedSenderBalances(senderAccountBalances);
-                return response;
-            }
-            return response;
-        }, (retry) -> log.info("There was an error "));
+                        addEntryInTransactions(txn, transactionLogRequest);
+                        response.setTransferSuccessful(true);
+                        return response;
+                }, (retry) -> log.info("There was an error ")
+        );
     }
 
 
     private void validateParameters(
-            @NonNull final TransactionLogRequest transferRequest) {
+            @NonNull final TransactionLogRequest transactionLogRequest) {
 
-        Validate.isTrue(transferRequest.getAmount() > 0);
-        Validate.notBlank(transferRequest.getTransactionScope())
-        Validate.notBlank(transferRequest.getTransactionCategory())
-        Validate.notBlank(transferRequest.getTransactionType())
-        Validate.notBlank(transferRequest.getTransactionId())
-        Validate.notBlank(transferRequest.getTransactionStatus())
-        Validate.notBlank(transferRequest.getTransactionFees())
-        Validate.notBlank(transferRequest.getSubjectModel())
-        Validate.notBlank(transferRequest.getWalletUUID())
-        Validate.notBlank(transferRequest.getVersion())
-        Validate.notBlank(transferRequest.getDescription())
-        Validate.notBlank(transferRequest.getGameType())
+        Validate.isTrue(transactionLogRequest.getAmount() > 0);
+        Validate.notBlank(transactionLogRequest.getTransactionScope())
+        Validate.notBlank(transactionLogRequest.getTransactionCategory())
+        Validate.notBlank(transactionLogRequest.getTransactionType())
+        Validate.notBlank(transactionLogRequest.getTransactionId())
+        Validate.notBlank(transactionLogRequest.getTransactionStatus())
+        Validate.notBlank(transactionLogRequest.getTransactionFees())
+        Validate.notBlank(transactionLogRequest.getSubjectModel())
+        Validate.notBlank(transactionLogRequest.getWalletUUID())
+        Validate.notBlank(transactionLogRequest.getVersion())
+        Validate.notBlank(transactionLogRequest.getDescription())
+        Validate.notBlank(transactionLogRequest.getGameType())
     }
 
     /**
@@ -230,38 +149,29 @@ public class Banking {
      *
      * @param txn The TransactionExecutor object which is instantiated during
      *            the QLDB Transaction
-     * @param transferRequest
+     * @param transactionLogRequest
      * @return List of documentIds created in the transactions table
      */
     private List<String> addEntryInTransactions(
             @NonNull final TransactionExecutor txn,
-            @NonNull final TransactionLogRequest transferRequest) {
+            @NonNull final TransactionLogRequest transactionLogRequest) {
 
-        final TransactionEntry senderTransactionEntry =
-                TransactionEntry.builder()
-                .accountId(transferRequest.getSenderAccountId())
-                .transactionType(TransactionType.DEBIT.name())
-                .notes(transferRequest.getNotes())
-                .amount(Decimal.valueOf(transferRequest.getAmount()))
-                .currency(transferRequest.getCurrency())
-                .build();
+        final TransactionLog transaction = TransactionLog.builder()
+            .amount(transactionLogRequest.getAmount())
+            .transactionScope(transactionLogRequest.getTransactionScope())
+            .transactionCategory(transactionLogRequest.getTransactionCategory())
+            .transactionType(transactionLogRequest.getTransactionType())
+            .transactionId(transactionLogRequest.getTransactionId())
+            .transactionStatus(transactionLogRequest.getTransactionStatus())
+            .transactionFees(transactionLogRequest.getTransactionFees())
+            .subjectModel(transactionLogRequest.getSubjectModel())
+            .walletUUID(transactionLogRequest.getWalletUUID())
+            .version(transactionLogRequest.getVersion())
+            .description(transactionLogRequest.getDescription())
+            .gameType(transactionLogRequest.getGameType())
+            .build()
 
-        final TransactionEntry receiverTransactionEntry =
-                TransactionEntry.builder()
-                .accountId(transferRequest.getReceiverAccountId())
-                .transactionType(TransactionType.CREDIT.name())
-                .notes(transferRequest.getNotes())
-                .amount(Decimal.valueOf(transferRequest.getAmount()))
-                .currency(transferRequest.getCurrency())
-                .build();
-
-        final Transaction transaction = Transaction.builder()
-                .transactionTime(LocalDate.now())
-                .senderAccountEntry(senderTransactionEntry)
-                .receiverAccountEntry(receiverTransactionEntry)
-                .build();
-
-        final String query = "INSERT INTO Transactions VALUE ? ";
+        final String query = "INSERT INTO TransactionLogs VALUE ? ";
         final IonValue transactionDocument =
                 ionHelper.toIonValue(transaction);
 
@@ -275,108 +185,6 @@ public class Banking {
                 "Inserted document ids {}", insertedDocumentIds);
 
         return insertedDocumentIds;
-    }
-
-    /**
-     * Update the balance, of a particular currency, for the given AccountId.
-     * This method computes the balance to be updated and
-     * then executes the "UPDATE" Query
-     *
-     * @param txn The TransactionExecutor object which is instantiated during
-     *            the QLDB Transaction
-     * @param balances
-     * @param accountId
-     * @param currency
-     * @param amount
-     * @param transactionType
-     * @return List of modified documents in the Accounts table
-     */
-    private List<String> updateBalance(@NonNull final TransactionExecutor txn,
-                                       @NonNull final List<Balance> balances,
-                                       @NonNull final String accountId,
-                                       @NonNull final String currency,
-                                       final double amount,
-                                       final TransactionType transactionType) {
-
-        final List<Balance> updatedCurrencyBalances =
-                updateBalanceForCurrency(balances, currency, amount,
-                        transactionType);
-
-        final String query = "UPDATE Accounts SET Balances = ? WHERE AccountId = ?";
-
-        final List<IonValue> parameters = new ArrayList<>();
-        parameters.add(ionHelper.toIonValue(updatedCurrencyBalances));
-        parameters.add(ionHelper.toIonValue(accountId));
-
-        final Result result = txn.execute(query, parameters);
-        final List<String> insertedDocumentIds = ionHelper.getDocumentIdsFromDmlResult(result);
-
-        log.info("Updated entries in Accounts table for Account Id {}. Affected document ids are {}",
-                accountId, insertedDocumentIds);
-        return insertedDocumentIds;
-    }
-
-    /**
-     * Check if the sender account has enough balance for the given currency
-     */
-    private Boolean senderHasSufficientBalance(@NonNull final List<Balance> senderAccountBalances,
-                                         @NonNull final String currency,
-                                         final double amount) {
-
-        final Optional<Balance> senderAccountCurrencyBalance = getBalanceForCurrency(senderAccountBalances, currency);
-
-        final Boolean senderSatisfiesCondition = senderAccountCurrencyBalance
-                        .map(Balance::getCurrencyBalance)
-                        .filter(b -> (b.doubleValue() > amount))
-                        .isPresent();
-
-        return senderSatisfiesCondition;
-    }
-
-    /**
-     * Check if receiver account accepts the currency
-     */
-    private Boolean receiverAcceptsCurrency(@NonNull final List<Balance> receiverAccountBalances,
-                                            final String currency) {
-        final Optional<Balance> receiverAccountCurrencyBalance = getBalanceForCurrency(receiverAccountBalances, currency);
-        return receiverAccountCurrencyBalance.isPresent();
-    }
-
-    /**
-     * Given a currency and list of Balance objects, where each object has two
-     * attributes: currency & balance, get the Balance of input currency.
-     */
-    private Optional<Balance> getBalanceForCurrency(@NonNull final List<Balance> balances,
-                                                    @NonNull final String currency) {
-        return balances.stream()
-                .filter(b -> currency.equals(b.getCurrency()))
-                .findFirst();
-    }
-
-    /**
-     * Update the Balance of the given currency by the given input amount.
-     * The update can be either an addition or subtraction depending on the
-     * TransactionType.
-     *
-     * Note: This method just modifies the Balance Object in the list but does
-     * not write anything to the DB
-     */
-    private List<Balance> updateBalanceForCurrency(@NonNull final List<Balance> balances,
-                                                   @NonNull final String currency,
-                                                   final double amount,
-                                                   final TransactionType transactionType) {
-        balances.forEach(balance -> {
-            if(currency.equals(balance.getCurrency())) {
-                if (TransactionType.DEBIT.equals(transactionType)) {
-                    balance.setCurrencyBalance(
-                            Decimal.valueOf(balance.getCurrencyBalance().subtract(Decimal.valueOf(amount))));
-                } else if (TransactionType.CREDIT.equals(transactionType)) {
-                    balance.setCurrencyBalance(
-                            Decimal.valueOf(balance.getCurrencyBalance().add(Decimal.valueOf(amount))));
-                }
-            }
-        });
-        return balances;
     }
 
 }
