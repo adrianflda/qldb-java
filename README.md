@@ -41,13 +41,31 @@ source_profile=wt-account
 
 3. Make sure you have valid AWS credentials setup. The AWS SDK used in the app will load the credentials automatically as long as you have setup the credentials using one of the methods mentioned in [setup-credentials guide](http://docs.aws.amazon.com/java-sdk/latest/developer-guide/setup-credentials.html)
 
-4. Build the project
+4. Setup constants
+
+```bash
+nano /src/main/java/software/amazon/qldb/example/Constants.java
+```
+
+```java
+    public static final int RETRY_LIMIT = 4;
+    public static final String LEDGER_NAME = "fantas-example-ledger";
+    public static final String TRANSACTION_LOG_TABLE_NAME = "transaction_log";
+    public static final String TRANSACTION_LOG_INDEX_NAME = "transaction_id";
+    .
+    .
+    .
+```
+
+5. Build the project
 
    `./gradlew build`
 
-5. Run the gradle tasks
+6. Run the gradle tasks
 
    `./gradlew run -Dtask=<NameOfTheTask>`
+
+   The execution begins by qldb-java/src/main/java/software/amazon/qldb/example/tasks/files
 
 ## Tasks
 There are three tasks in the sample which help you understand how to use Amazon QLDB:

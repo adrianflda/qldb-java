@@ -144,7 +144,6 @@ public class Banking {
 
         log.info("Created entries in Transactions table. " +
                 "Inserted document ids {}", insertedDocumentIds);
-
         return insertedDocumentIds;
     }
 
